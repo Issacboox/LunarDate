@@ -31,3 +31,21 @@ func (ob *OrbianService) OrbianRegister(orb *d.FormOrbianReq, req *http.Request)
 	}
 	return orbian, nil
 }
+
+func (ob *OrbianService) ListOrbian() ([]*d.FormOrbianReq, error) {
+	orbian, err := ob.repo.GetOrbian()
+	if err != nil {
+		return nil, ErrInternal
+	}
+
+	return orbian, nil
+
+}
+// func (us *UserService) GetAccountByAccountId(accountId string) ([]*domain.Account, error) {
+// 	account, err := us.repo.GetAccountByAccountId(accountId)
+// 	if err != nil {
+// 		return nil, domain.ErrInternal
+// 	}
+
+// 	return account, nil
+// }

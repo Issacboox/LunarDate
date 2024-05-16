@@ -10,7 +10,7 @@ type Router struct {
 	*fiber.App
 }
 
-func NewRouter(orbianHandler h.OrbainHandler) (*Router, error) {
+func NewRouter(orbianHandler h.OrbianHandler) (*Router, error) {
 	app := fiber.New()
 
 	api := app.Group("/api")

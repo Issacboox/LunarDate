@@ -17,9 +17,8 @@ type FormOrbianReq struct {
 	Address2             string `json:"address2" validate:"required"`
 	City                 string `json:"city" validate:"required"`
 	Zip                  string `json:"zip" validate:"required"`
-	CreateFormDate       string `json:"create_form_date" validate:"required"`
-	ImageFilePath string `json:"-"`
-	Image                string `json:"image"`
+	CreateFormDate       string `json:"create_form_date"`
+	ImageFilePath        string `json:"-"`
 	NameTitle            string `json:"name_title" validate:"required,name_title"`
 	FirstName            string `json:"first_name" validate:"required"`
 	LastName             string `json:"last_name" validate:"required"`
@@ -39,4 +38,13 @@ type FormOrbianReq struct {
 	WorkingAtCompanyName string `json:"working_at" validate:"required"`
 	CompanyPosition      string `json:"company_position" validate:"required"`
 	AmountOfOrdians      string `json:"ordian_amount" validate:"required"`
+}
+
+
+type OrbianResponse struct {
+	ID        string `json:"id"`
+	FirstName string `json:"first_name" `
+	LastName  string `json:"last_name"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }

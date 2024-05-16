@@ -3,9 +3,8 @@ package repository
 import (
 	d "bam/internal/core/domain"
 	u "bam/internal/core/utils"
-	"io"
 	"net/http"
-	"os"
+	"strconv"
 
 	"errors"
 	"strings"
@@ -19,6 +18,8 @@ var (
 	ErrConflictingData = errors.New("data conflicts with existing data in unique column")
 
 	ErrInternal = errors.New("internal server error")
+
+	ErrDataNotFound = errors.New("data not found")
 )
 
 type OrbianRepository struct {
@@ -30,7 +31,14 @@ func NewOrbianRepository(db *gorm.DB) *OrbianRepository {
 }
 
 func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error) {
-	// Parse the birth date to extract day, month, and year
+	// Calculate the age
+	age, err := u.CalculateAge(orb.BirthDay)
+	if err != nil {
+		return nil, err
+	}
+	orb.Age = strconv.Itoa(age)
+	orb.CreateFormDate = u.GetCurrentThaiDate()
+
 	birthday, err := time.Parse("02/01/2006", orb.BirthDay)
 	if err != nil {
 		return nil, err
@@ -47,33 +55,6 @@ func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request)
 	// Update the FormOrbianReq object with the fetched lunar date
 	orb.LunarDate = lunarDate
 
-	// Save the image file to the specified path
-	file, fileHeader, err := req.FormFile("image")
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	// Get the filename from the multipart.FileHeader
-	filename := fileHeader.Filename
-
-	// Create a file in the specified path
-	imagePath := "bam/internal/core/upload/" + filename
-	outFile, err := os.Create(imagePath)
-	if err != nil {
-		return nil, err
-	}
-	defer outFile.Close()
-
-	// Copy the uploaded file to the created file
-	_, err = io.Copy(outFile, file)
-	if err != nil {
-		return nil, err
-	}
-
-	// Update the FormOrbianReq object with the image file path
-	orb.ImageFilePath = imagePath
-
 	// Create the FormOrbianReq object in the database
 	if err := r.db.Create(orb).Error; err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
@@ -83,4 +64,16 @@ func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request)
 	}
 
 	return orb, nil
+}
+
+func (r *OrbianRepository) GetOrbian() ([]*d.FormOrbianReq, error) {
+    var orbians []*d.FormOrbianReq
+    if err := r.db.Find(&orbians).Error; err != nil {
+        if err == gorm.ErrRecordNotFound {
+            return nil, ErrDataNotFound
+        }
+        return nil, err
+    }
+
+    return orbians, nil
 }

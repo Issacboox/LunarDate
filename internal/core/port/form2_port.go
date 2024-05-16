@@ -6,9 +6,11 @@ import (
 )
 
 type OrbianRepository interface {
-	CreateOrbian(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
+    CreateOrbian(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
+    GetOrbian() ([]*d.FormOrbianReq, error)
 }
 
 type OrbianService interface {
-	OrbianRegister(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
+    OrbianRegister(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
+    ListOrbian() ([]*d.FormOrbianReq, error)
 }
