@@ -22,15 +22,15 @@ var (
 	ErrDataNotFound = errors.New("data not found")
 )
 
-type OrbianRepository struct {
+type OrdianRepository struct {
 	db *gorm.DB
 }
 
-func NewOrbianRepository(db *gorm.DB) *OrbianRepository {
-	return &OrbianRepository{db}
+func NewOrdianRepository(db *gorm.DB) *OrdianRepository {
+	return &OrdianRepository{db}
 }
 
-func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error) {
+func (r *OrdianRepository) CreateOrdian(orb *d.FormOrdianReq, req *http.Request) (*d.FormOrdianReq, error) {
 	// Calculate the age
 	age, err := u.CalculateAge(orb.BirthDay)
 	if err != nil {
@@ -52,10 +52,8 @@ func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request)
 	monthName := u.GetThaiMonthName(month)
 	lunarDate := u.FetchLunarDateAndNaksatNotFormat(day, monthName, year)
 
-	// Update the FormOrbianReq object with the fetched lunar date
 	orb.LunarDate = lunarDate
 
-	// Create the FormOrbianReq object in the database
 	if err := r.db.Create(orb).Error; err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return nil, ErrConflictingData
@@ -66,14 +64,25 @@ func (r *OrbianRepository) CreateOrbian(orb *d.FormOrbianReq, req *http.Request)
 	return orb, nil
 }
 
-func (r *OrbianRepository) GetOrbian() ([]*d.FormOrbianReq, error) {
-    var orbians []*d.FormOrbianReq
-    if err := r.db.Find(&orbians).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            return nil, ErrDataNotFound
-        }
-        return nil, err
-    }
+func (r *OrdianRepository) GetOrdian() ([]*d.FormOrdianReq, error) {
+	var ordians []*d.FormOrdianReq
+	if err := r.db.Find(&ordians).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrDataNotFound
+		}
+		return nil, err
+	}
 
-    return orbians, nil
+	return ordians, nil
+}
+
+func (r *OrdianRepository) GetOrdianById(ordianId string) ([]*d.FormOrdianReq, error) {
+	var ordian []*d.FormOrdianReq
+	if err := r.db.Where("id = ?", ordianId).Find(&ordian).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrDataNotFound
+		}
+		return nil, err
+	}
+	return ordian, nil
 }

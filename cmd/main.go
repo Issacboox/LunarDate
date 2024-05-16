@@ -39,11 +39,11 @@ func main() {
 		panic(err)
 	}
 
-	orbianRepository := r.NewOrbianRepository(db.DB)
-	orbianService := s.NewOrbianService(orbianRepository)
-	orbianHandler := h.NewOrbianHandler(orbianService)
+	ordianRepository := r.NewOrdianRepository(db.DB)
+	ordianService := s.NewOrdianService(ordianRepository)
+	ordianHandler := h.NewOrdianHandler(ordianService)
 
-	r, err := route.NewRouter(*orbianHandler) // Pass the handler directly, not the address
+	r, err := route.NewRouter(*ordianHandler) // Pass the handler directly, not the address
 	if err != nil {
 		panic(err)
 	}

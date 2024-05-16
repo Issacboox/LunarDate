@@ -14,38 +14,39 @@ var (
 	ErrInternal = errors.New("internal server error")
 )
 
-type OrbianService struct {
-	repo p.OrbianRepository
+type OrdianService struct {
+	repo p.OrdianRepository
 }
 
-func NewOrbianService(orbianRepository p.OrbianRepository) *OrbianService {
-	return &OrbianService{orbianRepository}
+func NewOrdianService(ordianRepository p.OrdianRepository) *OrdianService {
+	return &OrdianService{ordianRepository}
 }
 
-func (ob *OrbianService) OrbianRegister(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error) {
-	orbian, err := ob.repo.CreateOrbian(orb, req)
+func (ob *OrdianService) OrdianRegister(orb *d.FormOrdianReq, req *http.Request) (*d.FormOrdianReq, error) {
+	ordian, err := ob.repo.CreateOrdian(orb, req)
 	if err != nil {
 		// Log the error for debugging
-		log.Println("Error creating orbian:", err)
+		log.Println("Error creating ordian:", err)
 		return nil, err // Return the actual error
 	}
-	return orbian, nil
+	return ordian, nil
 }
 
-func (ob *OrbianService) ListOrbian() ([]*d.FormOrbianReq, error) {
-	orbian, err := ob.repo.GetOrbian()
+func (ob *OrdianService) ListOrdian() ([]*d.FormOrdianReq, error) {
+	ordian, err := ob.repo.GetOrdian()
 	if err != nil {
 		return nil, ErrInternal
 	}
 
-	return orbian, nil
+	return ordian, nil
 
 }
-// func (us *UserService) GetAccountByAccountId(accountId string) ([]*domain.Account, error) {
-// 	account, err := us.repo.GetAccountByAccountId(accountId)
-// 	if err != nil {
-// 		return nil, domain.ErrInternal
-// 	}
 
-// 	return account, nil
-// }
+func (ob *OrdianService) GetOrdianById(ordianId string) ([]*d.FormOrdianReq, error) {
+	ordian, err := ob.repo.GetOrdianById(ordianId)
+	if err != nil {
+		return nil, ErrInternal
+	}
+
+	return ordian, nil
+}

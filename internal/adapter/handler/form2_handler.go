@@ -17,15 +17,15 @@ import (
 	"github.com/google/uuid"
 )
 
-type OrbianHandler struct {
-	orbianService port.OrbianService
+type OrdianHandler struct {
+	ordianService port.OrdianService
 }
 
-func NewOrbianHandler(orbianService port.OrbianService) *OrbianHandler {
-	return &OrbianHandler{orbianService}
+func NewOrdianHandler(ordianService port.OrdianService) *OrdianHandler {
+	return &OrdianHandler{ordianService}
 }
 
-func (h *OrbianHandler) OrbianRegister(c *fiber.Ctx) error {
+func (h *OrdianHandler) OrdianRegister(c *fiber.Ctx) error {
 	// Parse the form data and files
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -35,8 +35,7 @@ func (h *OrbianHandler) OrbianRegister(c *fiber.Ctx) error {
 	// Get the form data
 	data := form.Value
 
-	// Create a FormOrbianReq object from the form data
-	orbian := &d.FormOrbianReq{
+	ordian := &d.FormOrdianReq{
 		Address1:             data["address1"][0],
 		Address2:             data["address2"][0],
 		City:                 data["city"][0],
@@ -66,8 +65,7 @@ func (h *OrbianHandler) OrbianRegister(c *fiber.Ctx) error {
 		return err
 	}
 
-	// Set the image file path in the FormOrbianReq object
-	orbian.ImageFilePath = imageUrl
+	ordian.ImageFilePath = imageUrl
 
 	// Convert fasthttp.Request to http.Request
 	httpReq, err := u.ConvertRequest(c.Request())
@@ -75,14 +73,13 @@ func (h *OrbianHandler) OrbianRegister(c *fiber.Ctx) error {
 		return err
 	}
 
-	// Call the service method to register the orbian
-	_, err = h.orbianService.OrbianRegister(orbian, httpReq)
+	_, err = h.ordianService.OrdianRegister(ordian, httpReq)
 	if err != nil {
 		return err
 	}
 
 	// Return a success response
-	res := newOrbianResponse(orbian)
+	res := newOrdianResponse(ordian)
 	return c.JSON(res)
 }
 
@@ -129,8 +126,8 @@ func uploadImage(c *fiber.Ctx) (string, error) {
 	return imageURL, nil
 }
 
-func newOrbianResponse(orb *d.FormOrbianReq) d.OrbianResponse {
-	return d.OrbianResponse{
+func newOrdianResponse(orb *d.FormOrdianReq) d.OrdianResponse {
+	return d.OrdianResponse{
 		ID:        strconv.FormatUint(uint64(orb.ID), 10),
 		FirstName: orb.FirstName,
 		LastName:  orb.LastName,
@@ -149,43 +146,41 @@ func handleSuccess(c *fiber.Ctx, res interface{}) error {
 	return c.JSON(res)
 }
 
-func (h *OrbianHandler) ListOrbian(c *fiber.Ctx) error {
-	orbian, err := h.orbianService.ListOrbian()
+func (h *OrdianHandler) ListOrdian(c *fiber.Ctx) error {
+	ordian, err := h.ordianService.ListOrdian()
 	if err != nil {
 		return handleError(c, err)
 	}
 
-	// Assuming orbianResponse is a struct that can be constructed from FormOrbianReq
-	res := make([]d.FormOrbianReq, 0)
-	for _, orb := range orbian {
-		res = append(res, d.FormOrbianReq{
-			// ID:                   orb.ID,
-			Address1:             orb.Address1,
-			Address2:             orb.Address2,
-			City:                 orb.City,
-			Zip:                  orb.Zip,
-			CreateFormDate:       orb.CreateFormDate,
-			NameTitle:            orb.NameTitle,
-			FirstName:            orb.FirstName,
-			LastName:             orb.LastName,
-			IdentityID:           orb.IdentityID,
-			FatherTitleName:      orb.FatherTitleName,
-			FatherFirstName:      orb.FatherFirstName,
-			FatherLastName:       orb.FatherLastName,
-			MatherTitleName:      orb.MatherTitleName,
-			MatherFirstName:      orb.MatherFirstName,
-			MatherLastName:       orb.MatherLastName,
-			BirthDay:             orb.BirthDay,
-			BirthTime:            orb.BirthTime,
-			LunarDate:            orb.LunarDate,
-			Age:                  orb.Age,
-			Height:               orb.Height,
-			Weight:               orb.Weight,
-			WorkingAtCompanyName: orb.WorkingAtCompanyName,
-			CompanyPosition:      orb.CompanyPosition,
-			AmountOfOrdians:      orb.AmountOfOrdians,
+	res := make([]d.GetOrdianResponse, 0)
+	for _, orb := range ordian {
+		res = append(res, d.GetOrdianResponse{
+			NameTitle:       orb.NameTitle,
+			FirstName:       orb.FirstName,
+			LastName:        orb.LastName,
+			BirthDay:        orb.BirthDay,
+			BirthTime:       orb.BirthTime,
+			LunarDate:       orb.LunarDate,
+			Age:             orb.Age,
+			Height:          orb.Height,
+			Weight:          orb.Weight,
+			AmountOfOrdians: orb.AmountOfOrdians,
 		})
 	}
 
 	return handleSuccess(c, res)
+}
+
+func (h *OrdianHandler) OrdianIdEndpoint(c *fiber.Ctx) error {
+	ordianId := c.Params("id")
+	if ordianId == "" {
+		return c.Status(fiber.StatusBadRequest).SendString("Bad Request: id is missing")
+	}
+
+	ordian, err := h.ordianService.GetOrdianById(ordianId)
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	return handleSuccess(c, ordian)
 }

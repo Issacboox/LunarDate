@@ -17,26 +17,9 @@ type datebase struct {
 
 var tables = []interface{}{
 	m.LunarDate{},
-	m.FormOrbianReq{},
+	m.FormOrdianReq{},
 }
 
-//	func InitDatabase() {
-//		dsn := fmt.Sprintf(
-//			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
-//			"root",
-//			"",
-//			"127.0.0.1",
-//			"3306",
-//			"lunar-date",
-//		)
-//		var err error
-//		db.DBConn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-//		if err != nil {
-//			panic(err)
-//		}
-//		fmt.Println("Database connected!")
-//		db.DBConn.AutoMigrate(&, &m.FormOrbianReq{})
-//	}
 func NewDatabase(ctx context.Context, config *config.DB, prod bool) (*datebase, error) {
 	var logLevel logger.LogLevel
 	if prod {
@@ -64,7 +47,6 @@ func NewDatabase(ctx context.Context, config *config.DB, prod bool) (*datebase, 
 
 	return &datebase{db}, nil
 }
-
 
 func (db *datebase) Close() error {
 	sqlDB, err := db.DB.DB()

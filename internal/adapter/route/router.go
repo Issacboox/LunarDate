@@ -10,7 +10,7 @@ type Router struct {
 	*fiber.App
 }
 
-func NewRouter(orbianHandler h.OrbianHandler) (*Router, error) {
+func NewRouter(ordianHandler h.OrdianHandler) (*Router, error) {
 	app := fiber.New()
 
 	api := app.Group("/api")
@@ -24,7 +24,9 @@ func NewRouter(orbianHandler h.OrbianHandler) (*Router, error) {
 		// }
 		form := v1.Group("/form")
 		{
-			form.Post("/ordian-regis", orbianHandler.OrbianRegister)
+			form.Post("/ordian-regis", ordianHandler.OrdianRegister)
+			form.Get("/ordian-list", ordianHandler.ListOrdian)
+			form.Get("/ordian-info/:id", ordianHandler.OrdianIdEndpoint)
 		}
 	}
 

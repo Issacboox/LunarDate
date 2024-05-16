@@ -5,10 +5,9 @@ import (
 )
 
 type LunarRepository interface {
-	CreateLunar(lunar *d.FormOrbianReq) (*d.FormOrbianReq, error)
-
+	CreateLunar(lunar *d.FormOrdianReq) (*d.FormOrdianReq, error)
 }
 
 type LunarService interface {
-	CreateLunar(lunar *d.FormOrbianReq) (*d.FormOrbianReq, error)
+	CreateLunar(lunar *d.FormOrdianReq) (*d.FormOrdianReq, error)
 }

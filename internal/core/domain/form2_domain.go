@@ -11,7 +11,7 @@ const (
 )
 
 // Response represents the outgoing JSON response
-type FormOrbianReq struct {
+type FormOrdianReq struct {
 	gorm.Model
 	Address1             string `json:"address1"  validate:"required"`
 	Address2             string `json:"address2" validate:"required"`
@@ -40,11 +40,26 @@ type FormOrbianReq struct {
 	AmountOfOrdians      string `json:"ordian_amount" validate:"required"`
 }
 
-
-type OrbianResponse struct {
+type OrdianResponse struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name" `
 	LastName  string `json:"last_name"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+}
+
+type GetOrdianResponse struct {
+	ID              string `json:"id"`
+	NameTitle       string `json:"name_title" `
+	FirstName       string `json:"first_name" `
+	LastName        string `json:"last_name"`
+	Age             string `json:"age" `
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+	BirthDay        string `json:"birth_day" `
+	BirthTime       string `json:"birth_time" `
+	LunarDate       string `json:"lunar_date"`
+	Height          string `json:"height"`
+	Weight          string `json:"weight" `
+	AmountOfOrdians string `json:"ordian_amount" `
 }

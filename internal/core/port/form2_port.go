@@ -5,12 +5,14 @@ import (
 	"net/http"
 )
 
-type OrbianRepository interface {
-    CreateOrbian(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
-    GetOrbian() ([]*d.FormOrbianReq, error)
+type OrdianRepository interface {
+	CreateOrdian(orb *d.FormOrdianReq, req *http.Request) (*d.FormOrdianReq, error)
+	GetOrdian() ([]*d.FormOrdianReq, error)
+	GetOrdianById(ordianId string) ([]*d.FormOrdianReq, error)
 }
 
-type OrbianService interface {
-    OrbianRegister(orb *d.FormOrbianReq, req *http.Request) (*d.FormOrbianReq, error)
-    ListOrbian() ([]*d.FormOrbianReq, error)
+type OrdianService interface {
+	OrdianRegister(orb *d.FormOrdianReq, req *http.Request) (*d.FormOrdianReq, error)
+	ListOrdian() ([]*d.FormOrdianReq, error)
+	GetOrdianById(ordianId string) ([]*d.FormOrdianReq, error)
 }
