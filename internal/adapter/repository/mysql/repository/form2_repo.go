@@ -86,3 +86,14 @@ func (r *OrdianRepository) GetOrdianById(ordianId string) (*d.FormOrdianReq, err
 	}
 	return ordian, nil
 }
+
+func (r *OrdianRepository) GetOrdianByIdPDF(ordianId string) (*d.FormOrdianReq, error) {
+	var ordian d.FormOrdianReq
+	if err := r.db.Where("id = ?", ordianId).Find(&ordian).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrDataNotFound
+		}
+		return nil, err
+	}
+	return &ordian, nil
+}

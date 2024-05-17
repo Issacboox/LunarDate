@@ -235,3 +235,16 @@ func (h *OrdianHandler) DownloadUserPDF(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).Send(pdfBytes)
 }
+
+func (h *OrdianHandler) DownloadOrdianByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	pdfBytes, err := h.ordianService.DownloadOrdianByID(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+
+	c.Set(fiber.HeaderContentType, "application/pdf")
+	c.Set(fiber.HeaderContentDisposition, "attachment; filename=ordination.pdf")
+	return c.Send(pdfBytes)
+}
