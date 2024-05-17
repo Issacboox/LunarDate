@@ -76,8 +76,8 @@ func (r *OrdianRepository) GetOrdian() ([]*d.FormOrdianReq, error) {
 	return ordians, nil
 }
 
-func (r *OrdianRepository) GetOrdianById(ordianId string) ([]*d.FormOrdianReq, error) {
-	var ordian []*d.FormOrdianReq
+func (r *OrdianRepository) GetOrdianById(ordianId string) (*d.FormOrdianReq, error) {
+	var ordian *d.FormOrdianReq
 	if err := r.db.Where("id = ?", ordianId).Find(&ordian).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrDataNotFound

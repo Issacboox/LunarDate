@@ -1,0 +1,93 @@
+body {
+    background: rgb(204, 204, 204);
+  }
+  page {
+    background: white;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    font-family: "Angsana New", Arial, sans-serif;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    
+  }
+  page[size="A4"][layout="landscape"] {
+    width: 29.7cm;
+    height: 21cm;
+  }
+  @media print {
+    body,
+    page {
+      background: white;
+      margin: 0;
+      box-shadow: 0;
+    }
+  }
+  div.top-form {
+    display: flex;
+    gap: 70px;
+    justify-content: center;
+    margin-left: 100px;
+  }
+  div.top-form > h1.title {
+    font-size: 1.9em;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 80px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+  }
+  img.img-ordian {
+    width: 2.8cm;
+    height: 3.5cm;
+    margin-top: 50px;
+    background-color: white;
+    border: 0px solid black;
+    object-fit: cover;
+  }
+  div.address {
+    display: flex;
+    justify-content: end;
+    text-align: end;
+    margin-right: 80px;
+  }
+  div.address > h2 {
+    font-weight: 500;
+  }
+  div.created-form-date > h2{
+    font-weight: 500;
+    text-align: center;
+    margin-left:110px;
+  }
+  div.created-form-header > h2 {
+    font-weight: 500;
+    margin-left: 100px;
+    margin-right: 100px;
+    text-align: justify;
+  }
+  div.form-sign > h2 {
+    font-weight: 500;
+    margin-left: 100px;
+    margin-right: 100px;
+    text-align: center;
+  }
+  div.ordian > h2 {
+    font-weight: 500;
+    margin-left: 100px;
+    margin-right: 100px;
+    text-align: justify;
+  }
+  div.footer > h2 {
+    font-weight: 500;
+    text-align: center;
+    margin-left: 100px;
+    margin-right: 100px;
+  }
+

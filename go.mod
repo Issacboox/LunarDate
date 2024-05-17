@@ -5,6 +5,14 @@ go 1.22.2
 require github.com/gocolly/colly v1.2.0
 
 require (
+	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
+	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
+
+)
+
+require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -40,6 +48,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
+	github.com/signintech/gopdf v0.25.0
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/text v0.15.0 // indirect

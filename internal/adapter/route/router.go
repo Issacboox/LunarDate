@@ -26,7 +26,9 @@ func NewRouter(ordianHandler h.OrdianHandler) (*Router, error) {
 		{
 			form.Post("/ordian-regis", ordianHandler.OrdianRegister)
 			form.Get("/ordian-list", ordianHandler.ListOrdian)
+			form.Get("/ordian-listall/:id", ordianHandler.ListOrdianAllData)
 			form.Get("/ordian-info/:id", ordianHandler.OrdianIdEndpoint)
+			form.Get("/ordian/:id/pdf", ordianHandler.DownloadUserPDF)
 		}
 	}
 

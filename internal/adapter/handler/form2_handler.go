@@ -54,6 +54,7 @@ func (h *OrdianHandler) OrdianRegister(c *fiber.Ctx) error {
 		BirthTime:            data["birth_time"][0],
 		Height:               data["height"][0],
 		Weight:               data["weight"][0],
+		CareerName:           data["career_name"][0],
 		WorkingAtCompanyName: data["working_at"][0],
 		CompanyPosition:      data["company_position"][0],
 		AmountOfOrdians:      data["ordian_amount"][0],
@@ -171,6 +172,47 @@ func (h *OrdianHandler) ListOrdian(c *fiber.Ctx) error {
 	return handleSuccess(c, res)
 }
 
+func (h *OrdianHandler) ListOrdianAllData(c *fiber.Ctx) error {
+	ordian, err := h.ordianService.ListOrdian()
+	if err != nil {
+		return handleError(c, err)
+	}
+
+	res := make([]d.FormOrdianReq, 0)
+	for _, orb := range ordian {
+		res = append(res, d.FormOrdianReq{
+			Address1:             orb.Address1,
+			Address2:             orb.Address2,
+			City:                 orb.City,
+			Zip:                  orb.Zip,
+			CreateFormDate:       orb.CreateFormDate,
+			NameTitle:            orb.NameTitle,
+			FirstName:            orb.FirstName,
+			LastName:             orb.LastName,
+			ImageFilePath:        orb.ImageFilePath,
+			IdentityID:           orb.IdentityID,
+			FatherTitleName:      orb.FatherTitleName,
+			FatherFirstName:      orb.FatherFirstName,
+			FatherLastName:       orb.FatherLastName,
+			MatherTitleName:      orb.MatherTitleName,
+			MatherFirstName:      orb.MatherFirstName,
+			MatherLastName:       orb.MatherLastName,
+			BirthDay:             orb.BirthDay,
+			BirthTime:            orb.BirthTime,
+			LunarDate:            orb.LunarDate,
+			Age:                  orb.Age,
+			Height:               orb.Height,
+			Weight:               orb.Weight,
+			CareerName:           orb.CareerName,
+			WorkingAtCompanyName: orb.WorkingAtCompanyName,
+			CompanyPosition:      orb.CompanyPosition,
+			AmountOfOrdians:      orb.AmountOfOrdians,
+		})
+	}
+
+	return handleSuccess(c, res)
+}
+
 func (h *OrdianHandler) OrdianIdEndpoint(c *fiber.Ctx) error {
 	ordianId := c.Params("id")
 	if ordianId == "" {
@@ -183,4 +225,13 @@ func (h *OrdianHandler) OrdianIdEndpoint(c *fiber.Ctx) error {
 	}
 
 	return handleSuccess(c, ordian)
+}
+
+func (h *OrdianHandler) DownloadUserPDF(c *fiber.Ctx) error {
+	id := c.Params("id")
+	pdfBytes, err := h.ordianService.DownloadOrdianByID(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+	return c.Status(fiber.StatusOK).Send(pdfBytes)
 }
