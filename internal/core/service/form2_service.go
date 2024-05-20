@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
 	"os"
 	"strings"
@@ -88,7 +89,15 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	tmpFile, err := ioutil.TempFile("", "image-*.jpg")
+	contentType := resp.Header.Get("Content-Type")
+	extensions, err := mime.ExtensionsByType(contentType)
+	if err != nil || len(extensions) == 0 {
+		log.Println("Error determining file extension:", err)
+		return nil, ErrInternal
+	}
+
+	ext := extensions[0]
+	tmpFile, err := ioutil.TempFile("", "image-*"+ext)
 	if err != nil {
 		log.Println("Error creating temporary file:", err)
 		return nil, ErrInternal
@@ -102,9 +111,28 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	}
 
 	imagePath := tmpFile.Name()
-	imageWidth := 30
-	imageHeight := 40
-	pdf.Image(imagePath, pdf.GetX()-31, pdf.GetY()-5, float64(imageWidth), float64(imageHeight), false, "", 0, "")
+	imageWidth := 40.0
+	imageHeight := 40.0
+
+	// Calculate aspect ratio
+	pdfImageOptions := gofpdf.ImageOptions{
+		ImageType: "",
+		ReadDpi:   true,
+	}
+
+	// Get image dimensions
+	info := pdf.RegisterImageOptions(imagePath, pdfImageOptions)
+	aspectRatio := info.Width() / info.Height()
+
+	// Calculate new dimensions to maintain aspect ratio
+	if imageWidth/imageHeight > aspectRatio {
+		imageWidth = imageHeight * aspectRatio
+	} else {
+		imageHeight = imageWidth / aspectRatio
+	}
+
+	// Add the image with the calculated dimensions
+	pdf.ImageOptions(imagePath, pdf.GetX()-36, pdf.GetY()-4, imageWidth, imageHeight, false, pdfImageOptions, 0, "")
 	pdf.Ln(40)
 
 	// Title
@@ -122,7 +150,6 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	content0 := `เรื่อง     ขอประทานการอุปสมบท`
 	content1 := `กราบทูล สมเด็จพระอริยวงศาคตญาณ สมเด็จพระสังฆราช สกลมหาสังฆปริณายก`
 
-	// Manually indent content2, content3, and content4
 	content2 := "        ด้วยเกล้ากระหม่อม " + ordian.NameTitle + " " + ordian.FirstName + " " + ordian.LastName + " เลขที่บัตรประจำตัวประชาชน " + ordian.IdentityID + " เป็นบุตร " + ordian.FatherTitleName + ordian.FatherFirstName + " " + ordian.FatherLastName + " และ " + ordian.MatherTitleName + ordian.MatherFirstName + " " + ordian.MatherLastName + " เกิดเมื่อ " + ordian.LunarDate + " เวลา " + ordian.BirthTime + " ตรงกับวันที่ " + ordian.BirthDay + " อายุ " + ordian.Age + " ปี ส่วนสูง " + ordian.Height + " เซนติเมตร น้ำหนัก " + ordian.Weight + " กิโลกรัม ปัจจุบันประกอบอาชีพ " + ordian.CareerName + " ที่ " + ordian.WorkingAtCompanyName + " ในตำแหน่ง " + ordian.CompanyPosition + " ประสงค์จะอุปสมบทเป็นพระภิกษุในพระพุทธศาสนา โดยขอประทานพระเมตตาฝ่าพระบาทโปรดทรงเป็นพระอุปัชฌายะ"
 	content3 := "      " + "การนี้เกล้ากระหม่อมได้ซักซ้อมอุปสมบทวิธีและรายละเอียดเบื้องต้นในการอุปสมบททั้งรับการอบรมกับ"
 	content3_1 := "พระมหาคุณณิช คณะไป โดยประสงค์จะอุปสมบทประมาณ " + ordian.AmountOfOrdians + " วัน จักเป็นวันและเวลาใดสุดแต่จะทรงพระกรุณาโปรด"
@@ -138,7 +165,6 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	pdf.MultiCell(0, 10, content0, "", "L", false)
 	pdf.MultiCell(0, 10, content1, "", "L", false)
 	pdf.Ln(5)
-
 	pdf.MultiCell(0, 10, content2, "", "J", false)
 	pdf.MultiCell(0, 10, IndentText(content3, 2)+content3_1, "", "J", false)
 	pdf.MultiCell(0, 10, content4, "", "L", false)
