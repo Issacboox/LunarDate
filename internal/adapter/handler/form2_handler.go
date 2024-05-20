@@ -226,6 +226,7 @@ func (h *OrdianHandler) OrdianIdEndpoint(c *fiber.Ctx) error {
 
 	return handleSuccess(c, ordian)
 }
+
 func (h *OrdianHandler) DownloadOrdianByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 

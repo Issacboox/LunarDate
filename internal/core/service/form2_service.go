@@ -7,6 +7,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/jung-kurt/gofpdf"
 )
@@ -54,49 +55,81 @@ func (ob *OrdianService) GetOrdianById(ordianId string) (*d.FormOrdianReq, error
 	return ordian, nil
 }
 
+func IndentText(text string, indentLevel int) string {
+	indent := strings.Repeat("    ", indentLevel)
+	return indent + text
+}
+
 func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	ordian, err := ob.repo.GetOrdianById(id)
 	if err != nil {
+		log.Println("Error fetching ordian by ID:", err)
 		return nil, ErrInternal
 	}
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.AddPage()
-	pdf.AddUTF8Font("THSarabun", "", "THSarabunNew.ttf")
-	pdf.SetFont("THSarabun", "", 16)
+	fontPath := "C://Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/core/utils/pdf/THSarabunNew.ttf"
+	pdf.AddUTF8Font("THSarabun", "", fontPath)
+
+	pdf.SetFont("THSarabun", "", 18)
+	text := "หนังสือกราบทูลขอประทานการอุปสมบท"
+	pdf.CellFormat(0, 10, text, "", 0, "C", false, 0, "")
+	// Load the image
+	imagePath := "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/core/utils/pdf/test_profile.png" // Update with the path to your image
+	imageWidth := 40
+	imageHeight := 40
+	pdf.Image(imagePath, pdf.GetX()-37, pdf.GetY()-4, float64(imageWidth), float64(imageHeight), false, "", 0, "")
+	pdf.Ln(40)
 
 	// Title
-	pdf.CellFormat(0, 10, "วันที่ "+ordian.CreateFormDate, "", 1, "R", false, 0, "")
+	pdf.CellFormat(0, 10, ordian.Address1, "", 1, "R", false, 0, "")
+	pdf.CellFormat(0, 10, ordian.Address2, "", 1, "R", false, 0, "")
+	pdf.CellFormat(0, 10, ordian.City, "", 1, "R", false, 0, "")
 	pdf.Ln(10)
 
 	// Subject
-	pdf.SetFont("THSarabun", "", 14)
-	pdf.CellFormat(0, 10, "เรื่อง    ขอประทานการอุปสมบท", "", 1, "C", false, 0, "")
+	pdf.SetFont("THSarabun", "", 18)
+	pdf.CellFormat(0, 10, "วันที่ "+ordian.CreateFormDate, "", 1, "C", false, 0, "")
 	pdf.Ln(5)
 
 	// Main Content
-	pdf.SetFont("THSarabun", "", 14)
-	content := `กราบทูล สมเด็จพระอริยวงศาคตญาณ สมเด็จพระสังฆราช สกลมหาสังฆปริณายก
-	ด้วยเกล้ากระหม่อม ` + ordian.NameTitle + ` ` + ordian.FirstName + ` ` + ordian.LastName + ` เลขที่บัตรประจำตัวประชาชน ` + ordian.IdentityID + ` เป็นบุตร ` + ordian.FatherTitleName + ` ` + ordian.FatherFirstName + ` ` + ordian.FatherLastName + ` และ ` + ordian.MatherTitleName + ` ` + ordian.MatherFirstName + ` ` + ordian.MatherLastName + ` เกิดเมื่อ ` + ordian.BirthDay + ` เวลา ` + ordian.BirthTime + ` อายุ ` + ordian.Age + ` ปี ส่วนสูง ` + ordian.Height + ` เซนติเมตร น้ำหนัก ` + ordian.Weight + ` กิโลกรัม ปัจจุบันประกอบอาชีพ ` + ordian.CareerName + ` ที่ ` + ordian.WorkingAtCompanyName + ` ในตำแหน่ง ` + ordian.CompanyPosition + ` ประสงค์จะอุปสมบทเป็นพระภิกษุในพระพุทธศาสนา โดยขอประทานพระเมตตาฝ่าพระบาทโปรดทรงเป็นพระอุปัชฌายะ
+	pdf.SetFont("THSarabun", "", 18)
+	content0 := `เรื่อง     ขอประทานการอุปสมบท`
+	content1 := `กราบทูล สมเด็จพระอริยวงศาคตญาณ สมเด็จพระสังฆราช สกลมหาสังฆปริณายก`
 
-	การนี้ เกล้ากระหม่อมได้ซักซ้อมอุปสมบทวิธีและรายละเอียดเบื้องต้นในการอุปสมบท ทั้งรับการอบรมกับพระมหาคุณณิช คณะไป โดยประสงค์จะอุปสมบทประมาณ ` + ordian.AmountOfOrdians + ` วัน จักเป็นวันและเวลาใดสุดแต่จะทรงพระกรุณาโปรด
+	content2 := IndentText(`ด้วยเกล้ากระหม่อม `+ordian.NameTitle+` `+ordian.FirstName+` `+ordian.LastName+` เลขที่บัตรประจำตัวประชาชน `+ordian.IdentityID+` เป็นบุตร `+ordian.FatherTitleName+` `+ordian.FatherFirstName+` `+ordian.FatherLastName+` และ `+ordian.MatherTitleName+` `+ordian.MatherFirstName+` `+ordian.MatherLastName+` เกิดเมื่อ `+ordian.LunarDate+` เวลา `+ordian.BirthTime+` ตรงกับวันที่ `+ordian.BirthDay+` อายุ `+ordian.Age+` ปี ส่วนสูง `+ordian.Height+` เซนติเมตร น้ำหนัก `+ordian.Weight+` กิโลกรัม ปัจจุบันประกอบอาชีพ `+ordian.CareerName+` ที่ `+ordian.WorkingAtCompanyName+` ในตำแหน่ง `+ordian.CompanyPosition+` ประสงค์จะอุปสมบทเป็นพระภิกษุในพระพุทธศาสนา โดยขอประทานพระเมตตาฝ่าพระบาทโปรดทรงเป็นพระอุปัชฌายะ`, 2)
 
-	จึงกราบทูลมาเพื่อทรงทราบและโปรดประทานอุปสมบท
+	content3 := `การนี้เกล้ากระหม่อมได้ซักซ้อมอุปสมบทวิธีและรายละเอียดเบื้องต้นในการอุปสมบททั้งรับการอบรมกับพระมหาคุณณิช คณะไป โดยประสงค์จะอุปสมบทประมาณ ` + ordian.AmountOfOrdians + ` วัน จักเป็นวันและเวลาใดสุดแต่จะทรงพระกรุณาโปรด`
 
-	ควรมิควรแล้วแต่จะโปรด
+	content4 := IndentText(`จึงกราบทูลมาเพื่อทรงทราบและโปรดประทานอุปสมบท`, 3)
 
-	เกล้ากระหม่อม ______________________
-	(` + ordian.NameTitle + ` ` + ordian.FirstName + ` ` + ordian.LastName + `)`
+	content5 := `ควรมิควรแล้วแต่จะโปรด`
+	content6 := `เกล้ากระหม่อม ______________________
+    (` + ordian.NameTitle + ` ` + ordian.FirstName + ` ` + ordian.LastName + `)`
 
-	pdf.MultiCell(0, 10, content, "", "L", false)
+	content7 := `อุปสมบทวัน ______________  ที่ _______  เดือน __________ พ.ศ. _________  เวลา _______ น.`
+	content8 := `ฉายาว่า ________________________`
 
-	// Create a buffer to store the PDF
+	pdf.MultiCell(0, 10, content0, "", "L", false)
+	pdf.MultiCell(0, 10, content1, "", "L", false)
+	pdf.Ln(5)
+
+	pdf.MultiCell(0, 10, content2, "", "J", false)
+	pdf.MultiCell(0, 10, IndentText(content3, 2), "", "L", false)
+	pdf.MultiCell(0, 10, content4, "", "L", false)
+	pdf.Ln(10)
+	pdf.MultiCell(0, 10, content5, "", "C", false)
+	pdf.MultiCell(0, 10, content6, "", "C", false)
+	pdf.MultiCell(0, 10, content7+content8, "", "C", false)
+	// pdf.MultiCell(0, 10,, "", "C", false)
+
 	var buf bytes.Buffer
 	err = pdf.Output(&buf)
 	if err != nil {
+		log.Println("Error generating PDF:", err)
 		return nil, err
 	}
 
-	// Return the PDF as a byte slice
 	return buf.Bytes(), nil
 }
