@@ -75,8 +75,9 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	pdf.SetFont("THSarabun", "", 18)
 	text := "หนังสือกราบทูลขอประทานการอุปสมบท"
 	pdf.CellFormat(0, 10, text, "", 0, "C", false, 0, "")
+
 	// Load the image
-	imagePath := "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/core/utils/pdf/test_profile.png" // Update with the path to your image
+	imagePath := ordian.ImageFilePath
 	imageWidth := 40
 	imageHeight := 40
 	pdf.Image(imagePath, pdf.GetX()-37, pdf.GetY()-4, float64(imageWidth), float64(imageHeight), false, "", 0, "")
@@ -86,7 +87,6 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	pdf.CellFormat(0, 10, ordian.Address1, "", 1, "R", false, 0, "")
 	pdf.CellFormat(0, 10, ordian.Address2, "", 1, "R", false, 0, "")
 	pdf.CellFormat(0, 10, ordian.City, "", 1, "R", false, 0, "")
-	pdf.Ln(10)
 
 	// Subject
 	pdf.SetFont("THSarabun", "", 18)
@@ -98,11 +98,11 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	content0 := `เรื่อง     ขอประทานการอุปสมบท`
 	content1 := `กราบทูล สมเด็จพระอริยวงศาคตญาณ สมเด็จพระสังฆราช สกลมหาสังฆปริณายก`
 
-	content2 := IndentText(`ด้วยเกล้ากระหม่อม `+ordian.NameTitle+` `+ordian.FirstName+` `+ordian.LastName+` เลขที่บัตรประจำตัวประชาชน `+ordian.IdentityID+` เป็นบุตร `+ordian.FatherTitleName+` `+ordian.FatherFirstName+` `+ordian.FatherLastName+` และ `+ordian.MatherTitleName+` `+ordian.MatherFirstName+` `+ordian.MatherLastName+` เกิดเมื่อ `+ordian.LunarDate+` เวลา `+ordian.BirthTime+` ตรงกับวันที่ `+ordian.BirthDay+` อายุ `+ordian.Age+` ปี ส่วนสูง `+ordian.Height+` เซนติเมตร น้ำหนัก `+ordian.Weight+` กิโลกรัม ปัจจุบันประกอบอาชีพ `+ordian.CareerName+` ที่ `+ordian.WorkingAtCompanyName+` ในตำแหน่ง `+ordian.CompanyPosition+` ประสงค์จะอุปสมบทเป็นพระภิกษุในพระพุทธศาสนา โดยขอประทานพระเมตตาฝ่าพระบาทโปรดทรงเป็นพระอุปัชฌายะ`, 2)
-
-	content3 := `การนี้เกล้ากระหม่อมได้ซักซ้อมอุปสมบทวิธีและรายละเอียดเบื้องต้นในการอุปสมบททั้งรับการอบรมกับพระมหาคุณณิช คณะไป โดยประสงค์จะอุปสมบทประมาณ ` + ordian.AmountOfOrdians + ` วัน จักเป็นวันและเวลาใดสุดแต่จะทรงพระกรุณาโปรด`
-
-	content4 := IndentText(`จึงกราบทูลมาเพื่อทรงทราบและโปรดประทานอุปสมบท`, 3)
+	// Manually indent content2, content3, and content4
+	content2 := "        ด้วยเกล้ากระหม่อม " + ordian.NameTitle + " " + ordian.FirstName + " " + ordian.LastName + " เลขที่บัตรประจำตัวประชาชน " + ordian.IdentityID + " เป็นบุตร " + ordian.FatherTitleName + ordian.FatherFirstName + " " + ordian.FatherLastName + " และ " + ordian.MatherTitleName + ordian.MatherFirstName + " " + ordian.MatherLastName + " เกิดเมื่อ " + ordian.LunarDate + " เวลา " + ordian.BirthTime + " ตรงกับวันที่ " + ordian.BirthDay + " อายุ " + ordian.Age + " ปี ส่วนสูง " + ordian.Height + " เซนติเมตร น้ำหนัก " + ordian.Weight + " กิโลกรัม ปัจจุบันประกอบอาชีพ " + ordian.CareerName + " ที่ " + ordian.WorkingAtCompanyName + " ในตำแหน่ง " + ordian.CompanyPosition + " ประสงค์จะอุปสมบทเป็นพระภิกษุในพระพุทธศาสนา โดยขอประทานพระเมตตาฝ่าพระบาทโปรดทรงเป็นพระอุปัชฌายะ"
+	content3 := "      " + "การนี้เกล้ากระหม่อมได้ซักซ้อมอุปสมบทวิธีและรายละเอียดเบื้องต้นในการอุปสมบททั้งรับการอบรมกับ"
+	content3_1 := "พระมหาคุณณิช คณะไป โดยประสงค์จะอุปสมบทประมาณ " + ordian.AmountOfOrdians + " วัน จักเป็นวันและเวลาใดสุดแต่จะทรงพระกรุณาโปรด"
+	content4 := "                จึงกราบทูลมาเพื่อทรงทราบและโปรดประทานอุปสมบท"
 
 	content5 := `ควรมิควรแล้วแต่จะโปรด`
 	content6 := `เกล้ากระหม่อม ______________________
@@ -110,19 +110,19 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 
 	content7 := `อุปสมบทวัน ______________  ที่ _______  เดือน __________ พ.ศ. _________  เวลา _______ น.`
 	content8 := `ฉายาว่า ________________________`
-
+	
 	pdf.MultiCell(0, 10, content0, "", "L", false)
 	pdf.MultiCell(0, 10, content1, "", "L", false)
 	pdf.Ln(5)
 
 	pdf.MultiCell(0, 10, content2, "", "J", false)
-	pdf.MultiCell(0, 10, IndentText(content3, 2), "", "L", false)
+	pdf.MultiCell(0, 10, IndentText(content3, 2)+content3_1, "", "J", false)
 	pdf.MultiCell(0, 10, content4, "", "L", false)
 	pdf.Ln(10)
 	pdf.MultiCell(0, 10, content5, "", "C", false)
 	pdf.MultiCell(0, 10, content6, "", "C", false)
-	pdf.MultiCell(0, 10, content7+content8, "", "C", false)
-	// pdf.MultiCell(0, 10,, "", "C", false)
+	pdf.MultiCell(0, 10, content7, "", "C", false)
+	pdf.MultiCell(0, 10, content8, "", "C", false)
 
 	var buf bytes.Buffer
 	err = pdf.Output(&buf)

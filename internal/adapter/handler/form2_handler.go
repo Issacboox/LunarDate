@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -25,6 +24,13 @@ func NewOrdianHandler(ordianService port.OrdianService) *OrdianHandler {
 	return &OrdianHandler{ordianService}
 }
 
+func getString(data map[string][]string, key string) string {
+	if val, ok := data[key]; ok && len(val) > 0 {
+		return val[0]
+	}
+	return ""
+}
+
 func (h *OrdianHandler) OrdianRegister(c *fiber.Ctx) error {
 	// Parse the form data and files
 	form, err := c.MultipartForm()
@@ -36,28 +42,28 @@ func (h *OrdianHandler) OrdianRegister(c *fiber.Ctx) error {
 	data := form.Value
 
 	ordian := &d.FormOrdianReq{
-		Address1:             data["address1"][0],
-		Address2:             data["address2"][0],
-		City:                 data["city"][0],
-		Zip:                  data["zip"][0],
-		NameTitle:            data["name_title"][0],
-		FirstName:            data["first_name"][0],
-		LastName:             data["last_name"][0],
-		IdentityID:           data["identity_id"][0],
-		FatherTitleName:      data["father_tname"][0],
-		FatherFirstName:      data["father_fname"][0],
-		FatherLastName:       data["father_lname"][0],
-		MatherTitleName:      data["mather_tname"][0],
-		MatherFirstName:      data["mather_fname"][0],
-		MatherLastName:       data["mather_lname"][0],
-		BirthDay:             data["birth_day"][0],
-		BirthTime:            data["birth_time"][0],
-		Height:               data["height"][0],
-		Weight:               data["weight"][0],
-		CareerName:           data["career_name"][0],
-		WorkingAtCompanyName: data["working_at"][0],
-		CompanyPosition:      data["company_position"][0],
-		AmountOfOrdians:      data["ordian_amount"][0],
+		Address1:             getString(data, "address1"),
+		Address2:             getString(data, "address2"),
+		City:                 getString(data, "city"),
+		Zip:                  getString(data, "zip"),
+		NameTitle:            getString(data, "name_title"),
+		FirstName:            getString(data, "first_name"),
+		LastName:             getString(data, "last_name"),
+		IdentityID:           getString(data, "identity_id"),
+		FatherTitleName:      getString(data, "father_tname"),
+		FatherFirstName:      getString(data, "father_fname"),
+		FatherLastName:       getString(data, "father_lname"),
+		MatherTitleName:      getString(data, "mather_tname"),
+		MatherFirstName:      getString(data, "mather_fname"),
+		MatherLastName:       getString(data, "mather_lname"),
+		BirthDay:             getString(data, "birth_day"),
+		BirthTime:            getString(data, "birth_time"),
+		Height:               getString(data, "height"),
+		Weight:               getString(data, "weight"),
+		CareerName:           getString(data, "career_name"),
+		WorkingAtCompanyName: getString(data, "working_at"),
+		CompanyPosition:      getString(data, "company_position"),
+		AmountOfOrdians:      getString(data, "ordian_amount"),
 	}
 
 	// Use uploadImage function to handle image upload
@@ -123,17 +129,16 @@ func uploadImage(c *fiber.Ctx) (string, error) {
 	}
 
 	// Return the URL for accessing the uploaded image
-	imageURL := fmt.Sprintf("http://localhost:3000/upload/%s", image)
+	imageURL := fmt.Sprintf("http://localhost:3000/api/v1/img/%s", image)
 	return imageURL, nil
 }
 
 func newOrdianResponse(orb *d.FormOrdianReq) d.OrdianResponse {
 	return d.OrdianResponse{
-		ID:        strconv.FormatUint(uint64(orb.ID), 10),
 		FirstName: orb.FirstName,
 		LastName:  orb.LastName,
-		CreatedAt: orb.CreatedAt.Format(time.RFC3339), // Convert time.Time to string
-		UpdatedAt: orb.UpdatedAt.Format(time.RFC3339), // Convert time.Time to string
+		CreatedAt: orb.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: orb.UpdatedAt.Format(time.RFC3339),
 	}
 }
 

@@ -20,6 +20,7 @@ type (
 		Zip                  string `json:"zip" validate:"required"`
 		CreateFormDate       string `json:"create_form_date"`
 		ImageFilePath        string `json:"-"`
+		Image                string `json:"image"`
 		NameTitle            string `json:"name_title" validate:"required,name_title"`
 		FirstName            string `json:"first_name" validate:"required"`
 		LastName             string `json:"last_name" validate:"required"`

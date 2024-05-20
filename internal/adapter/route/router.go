@@ -30,6 +30,10 @@ func NewRouter(ordianHandler h.OrdianHandler) (*Router, error) {
 			form.Get("/ordian-info/:id", ordianHandler.OrdianIdEndpoint)
 			form.Get("/ordian/:id/pdf", ordianHandler.DownloadOrdianByID)
 		}
+		img := v1.Group("/img")
+		{
+			img.Static("/", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/adapter/repository/upload")
+		}
 	}
 
 	return &Router{App: app}, nil
