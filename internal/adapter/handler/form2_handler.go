@@ -226,22 +226,12 @@ func (h *OrdianHandler) OrdianIdEndpoint(c *fiber.Ctx) error {
 
 	return handleSuccess(c, ordian)
 }
-
-func (h *OrdianHandler) DownloadUserPDF(c *fiber.Ctx) error {
-	id := c.Params("id")
-	pdfBytes, err := h.ordianService.DownloadOrdianByID(id)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
-	}
-	return c.Status(fiber.StatusOK).Send(pdfBytes)
-}
-
 func (h *OrdianHandler) DownloadOrdianByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	pdfBytes, err := h.ordianService.DownloadOrdianByID(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		return c.Status(fiber.StatusInternalServerError).SendString("Failed to generate PDF")
 	}
 
 	c.Set(fiber.HeaderContentType, "application/pdf")

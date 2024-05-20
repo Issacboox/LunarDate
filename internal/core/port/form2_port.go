@@ -9,7 +9,7 @@ type OrdianRepository interface {
 	CreateOrdian(orb *d.FormOrdianReq, req *http.Request) (*d.FormOrdianReq, error)
 	GetOrdian() ([]*d.FormOrdianReq, error)
 	GetOrdianById(ordianId string) (*d.FormOrdianReq, error)
-	GetOrdianByIdPDF(id string) (*d.FormOrdianReq, error)
+	// GetOrdianByIdPDF(id string) (*d.FormOrdianReq, error)
 }
 
 type OrdianService interface {
@@ -17,6 +17,6 @@ type OrdianService interface {
 	ListOrdian() ([]*d.FormOrdianReq, error)
 	GetOrdianById(ordianId string) (*d.FormOrdianReq, error)
 
-	GetOrdianByIdPDF(id string) (*d.FormOrdianReq, error)
+	// GetOrdianByIdPDF(id string) (*d.FormOrdianReq, error)
 	DownloadOrdianByID(id string) ([]byte, error)
 }
