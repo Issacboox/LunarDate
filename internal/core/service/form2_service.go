@@ -5,8 +5,11 @@ import (
 	p "bam/internal/core/port"
 	"bytes"
 	"errors"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/jung-kurt/gofpdf"
@@ -76,11 +79,32 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 	text := "หนังสือกราบทูลขอประทานการอุปสมบท"
 	pdf.CellFormat(0, 10, text, "", 0, "C", false, 0, "")
 
-	// Load the image
-	imagePath := ordian.ImageFilePath
-	imageWidth := 40
+	// Download the image from the URL
+	imageUrl := ordian.ImageFilePath
+	resp, err := http.Get(imageUrl)
+	if err != nil {
+		log.Println("Error downloading image:", err)
+		return nil, ErrInternal
+	}
+	defer resp.Body.Close()
+
+	tmpFile, err := ioutil.TempFile("", "image-*.jpg")
+	if err != nil {
+		log.Println("Error creating temporary file:", err)
+		return nil, ErrInternal
+	}
+	defer os.Remove(tmpFile.Name()) // clean up
+
+	_, err = io.Copy(tmpFile, resp.Body)
+	if err != nil {
+		log.Println("Error saving image to temporary file:", err)
+		return nil, ErrInternal
+	}
+
+	imagePath := tmpFile.Name()
+	imageWidth := 30
 	imageHeight := 40
-	pdf.Image(imagePath, pdf.GetX()-37, pdf.GetY()-4, float64(imageWidth), float64(imageHeight), false, "", 0, "")
+	pdf.Image(imagePath, pdf.GetX()-31, pdf.GetY()-5, float64(imageWidth), float64(imageHeight), false, "", 0, "")
 	pdf.Ln(40)
 
 	// Title
@@ -110,7 +134,7 @@ func (ob *OrdianService) DownloadOrdianByID(id string) ([]byte, error) {
 
 	content7 := `อุปสมบทวัน ______________  ที่ _______  เดือน __________ พ.ศ. _________  เวลา _______ น.`
 	content8 := `ฉายาว่า ________________________`
-	
+
 	pdf.MultiCell(0, 10, content0, "", "L", false)
 	pdf.MultiCell(0, 10, content1, "", "L", false)
 	pdf.Ln(5)
