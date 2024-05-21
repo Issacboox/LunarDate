@@ -10,7 +10,7 @@ type Router struct {
 	*fiber.App
 }
 
-func NewRouter(ordianHandler h.OrdianHandler) (*Router, error) {
+func NewRouter(ordianHandler h.OrdianHandler, fileHandler h.FileHandler) (*Router, error) {
 	app := fiber.New()
 
 	api := app.Group("/api")
@@ -33,6 +33,11 @@ func NewRouter(ordianHandler h.OrdianHandler) (*Router, error) {
 		img := v1.Group("/img")
 		{
 			img.Static("/", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/adapter/repository/upload")
+		}
+		file := v1.Group("/file")
+		{
+			file.Static("/uploads", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/adapter/repository/upload/file")
+			file.Post("/upload", fileHandler.UploadFiles)
 		}
 	}
 

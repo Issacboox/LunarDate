@@ -43,7 +43,11 @@ func main() {
 	ordianService := s.NewOrdianService(ordianRepository)
 	ordianHandler := h.NewOrdianHandler(ordianService)
 
-	r, err := route.NewRouter(*ordianHandler) // Pass the handler directly, not the address
+	fileRepository := r.NewFileRepository(db.DB)
+	fileService := s.NewFileService(fileRepository)
+	fileHandler := h.NewFileHandler(fileService)
+
+	r, err := route.NewRouter(*ordianHandler, *fileHandler) // Pass the handler directly, not the address
 	if err != nil {
 		panic(err)
 	}

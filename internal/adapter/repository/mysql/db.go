@@ -18,6 +18,7 @@ type datebase struct {
 var tables = []interface{}{
 	m.LunarDate{},
 	m.FormOrdianReq{},
+	m.MultiFile{},
 }
 
 func NewDatabase(ctx context.Context, config *config.DB, prod bool) (*datebase, error) {
