@@ -36,7 +36,7 @@ func NewRouter(ordianHandler h.OrdianHandler, fileHandler h.FileHandler) (*Route
 		}
 		file := v1.Group("/file")
 		{
-			file.Static("/uploads", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/internal/adapter/repository/upload/file")
+			file.Static("/", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/uploads")
 			file.Post("/upload", fileHandler.UploadFiles)
 		}
 	}

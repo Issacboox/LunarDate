@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	d "bam/internal/core/domain"
@@ -40,6 +41,11 @@ func (h *FileHandler) UploadFiles(c *fiber.Ctx) error {
 		}
 		typeTracker[fileType] = true
 
+		// Create the uploads directory if it doesn't exist
+		if err := os.MkdirAll("uploads", 0755); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Failed to create uploads directory: %s", err.Error())})
+		}
+
 		filePath := filepath.Join("uploads", file.Filename)
 		if err := c.SaveFile(file, filePath); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Failed to save file: %s", err.Error())})
@@ -51,11 +57,13 @@ func (h *FileHandler) UploadFiles(c *fiber.Ctx) error {
 			if err != nil {
 				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Failed to convert image to PDF: %s", err.Error())})
 			}
+
+			// Update the file path to point to the PDF file
 			filePath = pdfPath
 		}
 
 		// Update the file path to include the base URL
-		filePath = "http://127.0.0.1:3000/api/v1/file/uploads/" + filepath.Base(filePath)
+		filePath = "http://127.0.0.1:3000/api/v1/file/" + filepath.Base(filePath)
 
 		newFile := d.MultiFile{
 			FileName: file.Filename,
