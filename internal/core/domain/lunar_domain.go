@@ -1,21 +1,18 @@
 package model
 
-import "gorm.io/gorm"
-
-type Request struct {
-	Birthday string `json:"birthday"`
-}
-
-// Response represents the outgoing JSON response
-type LunarDate struct {
-	gorm.Model
-	BirthdayDate string `json:"birthday_date"`
-	Day          string `json:"day"`
-	LunarDate    string `json:"lunar_date"`
-	Naksat       string `json:"naksat"`
-}
-
-type CheckLunarDate struct {
-	Date      string `json:"date"`
-	LunarDate string `json:"lunar_date"`
-}
+type (
+	Request struct {
+		Birthday string `json:"birthday"`
+	}
+	LunarDateResponse struct {
+		Birthday   string `json:"birthday"`
+		Age        int    `json:"age"`
+		Day        string `json:"day"`
+		LunarDate  string `json:"lunar_date"`
+		NaksatYear string `json:"naksat_year"`
+	}
+	CheckLunarDate struct {
+		Date      string `json:"date"`
+		LunarDate string `json:"lunar_date"`
+	}
+)

@@ -16,7 +16,7 @@ type datebase struct {
 }
 
 var tables = []interface{}{
-	m.LunarDate{},
+	m.LunarDateResponse{},
 	m.FormOrdianReq{},
 	m.MultiFile{},
 }

@@ -10,7 +10,7 @@ type Router struct {
 	*fiber.App
 }
 
-func NewRouter(ordianHandler h.OrdianHandler, fileHandler h.FileHandler) (*Router, error) {
+func NewRouter(ordianHandler h.OrdianHandler, fileHandler h.FileHandler, lunarHandler h.LunarDateHandler) (*Router, error) {
 	app := fiber.New()
 
 	api := app.Group("/api")
@@ -38,6 +38,10 @@ func NewRouter(ordianHandler h.OrdianHandler, fileHandler h.FileHandler) (*Route
 		{
 			file.Static("/", "C:/Users/Sirin/OneDrive/เอกสาร/go/LunarDate/uploads")
 			file.Post("/upload", fileHandler.UploadFiles)
+		}
+		lunar := v1.Group("/lunar")
+		{
+			lunar.Get("/:date", lunarHandler.GetLunarDate)
 		}
 	}
 

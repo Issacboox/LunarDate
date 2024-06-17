@@ -47,7 +47,10 @@ func main() {
 	fileService := s.NewFileService(fileRepository)
 	fileHandler := h.NewFileHandler(fileService)
 
-	r, err := route.NewRouter(*ordianHandler, *fileHandler) // Pass the handler directly, not the address
+	lunarDateService := s.NewLunarDateService()
+	lunarDateHandler := h.NewLunarDateHandler(lunarDateService)
+
+	r, err := route.NewRouter(*ordianHandler, *fileHandler, *lunarDateHandler) // Pass the handler directly, not the address
 	if err != nil {
 		panic(err)
 	}
